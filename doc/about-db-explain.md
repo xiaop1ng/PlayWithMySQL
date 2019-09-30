@@ -56,9 +56,9 @@ explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
 +----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
 ```
 
-我们可以看到没有索引的时候 type 为 ALL，也就是全表扫描。
+我们可以看到没有索引的时候 type 为 ALL，也就是全表扫描。 key 是 NULL，也就是说这个查询没有使用到任何索引。
 
-删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立唯一索引，再查看执行计划
+删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立唯一索引，再查看执行计划：
 
 ```mysql
 explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
@@ -70,7 +70,10 @@ explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
 +----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
 ```
 
-删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立索引，再查看执行计划
+加了唯一索引之后，type 为 const，key 为 unique_key_user_user_sn 表明这个查询使用到了该索引。
+
+
+删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立索引，再查看执行计划：
 
 ```mysql
 explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
@@ -81,3 +84,5 @@ explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
 |  1 | SIMPLE      | user  | NULL       | ref  | key_user_user_sn | key_user_user_sn | 99      | const |    1 |      100 | NULL  |
 +----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------+
 ```
+
+加了索引之后，type 为 ref 为 key_user_user_sn 表明这个查询使用到了该索引。
