@@ -4,9 +4,10 @@ database playground
 
 所有实验，基于 MySQL 版本 `5.7.27`
 
-> SELECT VERSION() `version`, NOW() `now`;
 
-```
+```mysql
+SELECT VERSION() `version`, NOW() `now`;
+
 +------------+---------------------+
 | version    | now                 |
 +------------+---------------------+
