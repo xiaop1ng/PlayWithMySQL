@@ -15,6 +15,7 @@
 
 ```mysql
 explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
+
 +----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
 | id | select_type | table | partitions | type  | possible_keys           | key                     | key_len | ref   | rows | filtered | Extra |
 +----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
@@ -29,9 +30,9 @@ explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
 - type 连接使用的类型
 
 > 结果值从好到坏依次是：
-system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL
+system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL 
 也就是说 type 记录了是否使用了索引还是全表扫描，const, eg_reg, ref, range, index, ALL
-一般来说，得保证查询至少达到range级别，最好能达到ref，否则就可能会出现性能问题。
+一般来说，得保证查询至少达到 range 级别，最好能达到 ref，否则就可能会出现性能问题。
 
 - possible_keys 指出使用到那些索引有助于查询
 - key 实际选择的索引
@@ -42,3 +43,41 @@ system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_su
 - Extra 附件信息
 
 > 特别的 explain 不会考虑 cache；不能显示 mysql 在执行查询时所作的优化工作；部分统计信息是估算的。
+
+我们删掉 `user_sn` 上所有的索引，然后查看一下执行计划
+
+```mysql
+explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
+
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows   | filtered | Extra       |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+|  1 | SIMPLE      | user  | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 994143 |       10 | Using where |
++----+-------------+-------+------------+------+---------------+------+---------+------+--------+----------+-------------+
+```
+
+我们可以看到没有索引的时候 type 为 ALL，也就是全表扫描。
+
+删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立唯一索引，再查看执行计划
+
+```mysql
+explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
+
++----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type  | possible_keys           | key                     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | const | unique_key_user_user_sn | unique_key_user_user_sn | 99      | const |    1 |      100 | NULL  |
++----+-------------+-------+------------+-------+-------------------------+-------------------------+---------+-------+------+----------+-------+
+```
+
+删掉 `user_sn` 上所有的索引然后在 `user_sn` 建立索引，再查看执行计划
+
+```mysql
+explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
+
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------+
+| id | select_type | table | partitions | type | possible_keys    | key              | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | user  | NULL       | ref  | key_user_user_sn | key_user_user_sn | 99      | const |    1 |      100 | NULL  |
++----+-------------+-------+------------+------+------------------+------------------+---------+-------+------+----------+-------+
+```
