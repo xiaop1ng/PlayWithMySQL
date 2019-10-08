@@ -30,7 +30,7 @@ explain select * from `user` where user_sn = '826104d6e34b11e9be1768f72847b82b';
 - type 连接使用的类型
 
 > 结果值从好到坏依次是：
-system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL 
+system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL > UNKNOWN
 也就是说 type 记录了是否使用了索引还是全表扫描，const, eg_reg, ref, range, index, ALL
 一般来说，得保证查询至少达到 range 级别，最好能达到 ref，否则就可能会出现性能问题。
 
