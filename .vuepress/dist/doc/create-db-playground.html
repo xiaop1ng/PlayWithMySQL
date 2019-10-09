@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>创建一个玩耍的库</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.bfdb0b53.css" as="style"><link rel="preload" href="/assets/js/app.af99f025.js" as="script"><link rel="preload" href="/assets/js/2.c97e13af.js" as="script"><link rel="preload" href="/assets/js/8.532900da.js" as="script"><link rel="prefetch" href="/assets/js/3.b18d04e4.js"><link rel="prefetch" href="/assets/js/4.6a3beb70.js"><link rel="prefetch" href="/assets/js/5.a9911ab6.js"><link rel="prefetch" href="/assets/js/6.c36419ef.js"><link rel="prefetch" href="/assets/js/7.4ab77911.js"><link rel="prefetch" href="/assets/js/9.629285f3.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.bfdb0b53.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <!----> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="创建一个玩耍的库"><a href="#创建一个玩耍的库" aria-hidden="true" class="header-anchor">#</a> 创建一个玩耍的库</h1> <p>一个玩耍的库，所以他的有一定数据量，且有一定代表意义。
+所以我们准备创建用户模块的表，这个表拥有 100w 条用户数据。</p> <div class="language-mysql extra-class"><pre class="language-text"><code>-- 用户表
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_sn` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_name` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sex` varchar(2) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `create_time` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- 用户密码表
+DROP TABLE IF EXISTS `user_pass`;
+CREATE TABLE `user_pass` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_sn` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+</code></pre></div><p>创建 100w 条数据</p> <div class="language-mysql extra-class"><pre class="language-text"><code>-- 创建一个存储过程，用于循环创建数据
+create procedure create_data(a int) 
+	begin
+        declare i int default 1;
+	while i&lt;=a DO -- 循环开始
+        insert into `user` value( i, REPLACE( UUID(), '-', '') , i, floor(1+rand()*2), i, now() );
+        insert into user_pass value (i, i, md5(i));
+        set i=i+1;
+	end while; -- 循环结束
+	end;
+
+-- 执行存储过程，这里的 1000000 为入参
+call create_data(1000000);
+-- 删除存储过程
+drop procedure if exists create_data;
+</code></pre></div><p>时间: 2432.784s，大约要花 40 多分钟，等不了那么久的同学也可以创建 10w 条数据先耍着。</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.af99f025.js" defer></script><script src="/assets/js/2.c97e13af.js" defer></script><script src="/assets/js/8.532900da.js" defer></script>
+  </body>
+</html>
