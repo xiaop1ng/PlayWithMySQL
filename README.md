@@ -22,6 +22,6 @@ SELECT VERSION() `version`, NOW() `now`;
 ### Contents
 
 - [创建实验场地](/doc/create-db-playground.md)
-- [索引](/doc/abount-db-index.md)
-- [执行计划](/doc/abount-db-explain.md)
+- [索引](/doc/about-db-index.md)
+- [执行计划](/doc/about-db-explain.md)
 - ...
