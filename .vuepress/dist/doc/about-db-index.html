@@ -7,7 +7,7 @@
     <meta name="description" content="">
     
     
-    <link rel="preload" href="/assets/css/0.styles.bfdb0b53.css" as="style"><link rel="preload" href="/assets/js/app.af99f025.js" as="script"><link rel="preload" href="/assets/js/2.c97e13af.js" as="script"><link rel="preload" href="/assets/js/7.4ab77911.js" as="script"><link rel="prefetch" href="/assets/js/3.b18d04e4.js"><link rel="prefetch" href="/assets/js/4.6a3beb70.js"><link rel="prefetch" href="/assets/js/5.a9911ab6.js"><link rel="prefetch" href="/assets/js/6.c36419ef.js"><link rel="prefetch" href="/assets/js/8.532900da.js"><link rel="prefetch" href="/assets/js/9.629285f3.js">
+    <link rel="preload" href="/assets/css/0.styles.bfdb0b53.css" as="style"><link rel="preload" href="/assets/js/app.d29d5351.js" as="script"><link rel="preload" href="/assets/js/2.c97e13af.js" as="script"><link rel="preload" href="/assets/js/7.9b0078a3.js" as="script"><link rel="prefetch" href="/assets/js/3.b18d04e4.js"><link rel="prefetch" href="/assets/js/4.6a3beb70.js"><link rel="prefetch" href="/assets/js/5.0c1665fa.js"><link rel="prefetch" href="/assets/js/6.b41f1462.js"><link rel="prefetch" href="/assets/js/8.fe13575f.js"><link rel="prefetch" href="/assets/js/9.629285f3.js">
     <link rel="stylesheet" href="/assets/css/0.styles.bfdb0b53.css">
   </head>
   <body>
@@ -17,6 +17,6 @@ set global query_cache_type=0;
 </code></pre></div><p>业务系统中不宜将自增的 <code>id</code> 暴露出去，所以这里选择使用 <code>user_sn</code> 来查询对应的用户信息。</p> <blockquote><p>select * from <code>user</code> where user_sn = '826104d6e34b11e9be1768f72847b82b'; -- 1.369s</p></blockquote> <p>可以明显的看到这个查询耗时太久了，我们知道 <code>user_sn</code> 是非空且唯一的 uuid，所以这里我们加上唯一索引。</p> <blockquote><p>CREATE UNIQUE INDEX unique_key_user_user_sn ON user(user_sn(32)); -- 5.660s</p></blockquote> <p>建立好唯一索引之后再来查询一次</p> <blockquote><p>select * from <code>user</code> where user_sn = '826104d6e34b11e9be1768f72847b82b'; -- 0.004s</p></blockquote> <p>建立了唯一索引之后查询效率提升了 342 倍，这里是基于 100 万数据的查询结果。显而易见的是在加了索引之后的查询不会搜全表，而不加索引的查询会搜全表。</p> <p>最后试试把唯一索引换成普通的 Btree 索引的查询效率</p> <div class="language-mysql extra-class"><pre class="language-text"><code>DROP INDEX unique_key_user_user_sn ON user;
 CREATE INDEX key_user_user_sn ON user( user_sn(32) );  -- 5.671s
 </code></pre></div><blockquote><p>select * from <code>user</code> where user_sn = '826104d6e34b11e9be1768f72847b82b'; -- 0.003s</p></blockquote> <p>我们这里看到的结果是建立普通索引和唯一索引之后的查询效率是差不多的。</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/assets/js/app.af99f025.js" defer></script><script src="/assets/js/2.c97e13af.js" defer></script><script src="/assets/js/7.4ab77911.js" defer></script>
+    <script src="/assets/js/app.d29d5351.js" defer></script><script src="/assets/js/2.c97e13af.js" defer></script><script src="/assets/js/7.9b0078a3.js" defer></script>
   </body>
 </html>
